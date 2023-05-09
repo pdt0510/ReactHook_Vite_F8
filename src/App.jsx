@@ -1,58 +1,157 @@
 import './App.css';
-import { useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 
-const order = [100, 200, 300];
+//init state
+const initState = [];
 
-//app1
-function App() {
-	const [counter, setCounter] = useState(0);
-	const [counter2, setCounter2] = useState(100);
-	const [init, setInit] = useState(() => {
-		const total = order.reduce((total, cur) => total + cur); //12ms31ss
-		return total;
-	});
-	const [info, setInfo] = useState({
-		name: 'PDT',
-		age: 30,
-	});
+//actions
+const addTodo = 'addTodo';
+const removeTodo = 'removeTodo';
 
-	const handleClick = () => {
-		setCounter(counter + 1);
-		setCounter2(counter2 - 1);
+//action fn, v41xx2
+const setJobFn = (payload) => {
+	return {
+		type: addTodo,
+		payload,
+	};
+};
 
-		setCounter(counter + 2);
-		setCounter2(counter2 - 2);
+const delJobFn = (id) => {
+	return {
+		type: removeTodo,
+		payload: { id },
+	};
+};
 
-		//last ones used for a render, 9ms23ss
-		setCounter(counter + 3);
-		setCounter2(counter2 - 3);
-		setInit(init + 1);
+//reducer
+const todoReducer = (state, dispatchAction) => {
+	const { type, payload } = dispatchAction;
+	if (type === addTodo) {
+		return [...state, payload];
+	}
+	if (type === removeTodo) {
+		return state.filter((item) => item.id !== payload.id);
+	}
+	return 'Action failed';
+};
 
-		// 15ms21ss
-		setInfo({
-			...info,
-			gender: 'male',
+//App2,
+const App = () => {
+	const [todo, setTodo] = useState('');
+	const [todoList, dispatchAction] = useReducer(todoReducer, initState);
+
+	const handleOnchange = (event) => {
+		const { value } = event.target;
+		setTodo(value);
+	};
+
+	const renderList = (list) => {
+		return list.map((item) => {
+			return (
+				<h3 key={item.id}>
+					{item.id}: {item.name} ---{' '}
+					<span
+						style={{ cursor: 'pointer', color: 'blue' }}
+						onClick={() => dispatchAction(delJobFn(item.id))} //v41xx2
+					>
+						X
+					</span>
+				</h3>
+			);
 		});
 	};
 
-	const handleClick2 = () => {
-		//10ms53ss
-		console.log(counter);
-		setCounter((curState) => curState + 1);
-		setCounter((curState) => curState + 1);
-		setCounter((curState) => curState + 1);
+	const handleAddTodo = () => {
+		const payload = {
+			name: todo,
+			id: todoList.length ? todoList[todoList.length - 1].id + 1 : 1,
+		};
+		dispatchAction(setJobFn(payload)); //v41xx2
+		setTodo('');
 	};
 
 	return (
 		<div className='App'>
-			<h1>Counter 1: {counter}</h1>
-			<h1>Counter 2: {counter2}</h1>
-			<h1>Init: {init}</h1>
-			<h1>Info: {JSON.stringify(info)}</h1> {/* 15ms21ss */}
-			<button onClick={handleClick}>Click 1</button>
-			<button onClick={handleClick2}>Callback Click</button>
+			<input
+				type='text'
+				name='todo'
+				value={todo}
+				placeholder='Add a todo . . .'
+				onChange={handleOnchange}
+			/>
+			<button onClick={handleAddTodo}>Add todo</button>
+			{todoList.length > 0 && (
+				<>
+					<h1>Todo list</h1>
+					{renderList(todoList)}
+				</>
+			)}
 		</div>
 	);
-}
+};
+
+//App2, v41xx1
+const App2 = () => {
+	const [todo, setTodo] = useState('');
+	const [todoList, dispatchAction] = useReducer(todoReducer, initState);
+
+	const handleOnchange = (event) => {
+		const { value } = event.target;
+		setTodo(value);
+	};
+
+	const handleAddTodo = () => {
+		dispatchAction({
+			type: addTodo,
+			payload: {
+				id: todoList.length ? todoList[todoList.length - 1].id + 1 : 1,
+				name: todo,
+			},
+		});
+		setTodo('');
+	};
+
+	const handleDel = (id) => {
+		dispatchAction({
+			type: removeTodo,
+			payload: { id },
+		});
+	};
+
+	const renderList = (list) => {
+		return list.map((item) => {
+			return (
+				<h3 key={item.id}>
+					{item.id}: {item.name} ---{' '}
+					<span
+						style={{ cursor: 'pointer', color: 'blue' }}
+						onClick={() => handleDel(item.id)}
+					>
+						X
+					</span>
+				</h3>
+			);
+		});
+	};
+
+	return (
+		<div className='App'>
+			<input
+				type='text'
+				name='todo'
+				value={todo}
+				placeholder='Add a todo . . .'
+				onChange={handleOnchange}
+			/>
+			<button onClick={handleAddTodo}>Add todo</button>
+			{todoList.length > 0 && (
+				<>
+					<h1>Todo list</h1>
+					{renderList(todoList)}
+				</>
+			)}
+		</div>
+	);
+};
 
 export default App;

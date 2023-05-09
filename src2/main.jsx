@@ -8,9 +8,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 		<App />
 	</BrowserRouter>,
 );
-
-/*
-useEffect, useLayoutEffect, useRef, memo, useCallback, useMemo, useReducer(redux)
-
-
-*/
