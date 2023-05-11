@@ -1,10 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App';
+import { ThemeProvider } from './context/theme/ThemeContext.jsx'; //13ms07ss
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<BrowserRouter>
-		<App />
+		<ThemeProvider>
+			<App />
+		</ThemeProvider>
 	</BrowserRouter>,
 );

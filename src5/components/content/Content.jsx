@@ -4,7 +4,7 @@ function Content(props) {
 	return (
 		<div>
 			<h1>Content page</h1>
-			<Paragraph />
+			<Paragraph theme={props.theme} /> {/* 31ss */}
 		</div>
 	);
 }
