@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import ThemeContext from '../../context/theme/ThemeContext';
 
 function Paragraph(props) {
+	console.log('Paragraph re-render');
 	const isLight = useContext(ThemeContext).lightTheme; //16ms20ss
 
 	return (

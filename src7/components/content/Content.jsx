@@ -1,6 +1,7 @@
 import Paragraph from '../paragraph/Paragraph';
 
-function Content(props) {
+function Content() {
+	console.log('Content re-render');
 	return (
 		<div>
 			<h1>Content page</h1>

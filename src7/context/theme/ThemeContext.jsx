@@ -4,6 +4,7 @@ const ThemeContext = createContext(); // 12ms04ss
 
 // 13ms07ss
 export const ThemeProvider = (props) => {
+	console.log('ThemeProvider re-render ------------');
 	const [light, setTheme] = useState(true);
 
 	const handleToggle = () => {
